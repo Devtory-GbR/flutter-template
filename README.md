@@ -91,7 +91,7 @@ That's all now just start to build your views.
   - consider that automated test's are quite need and flutter has a really nice testing framework even for ui
   - https://docs.flutter.dev/testing
 
-### Environment <!-- omit in toc -->
+### Environment<!-- omit in toc -->
 
 You can run the app in different environment - dev, staging or prod.
 During the startup you can then load specific global params over an .env-File e.g. HTTP Url.
@@ -130,7 +130,7 @@ print(Environment().env['CLIENT_URL']);
 print(Environment().config.isDev);
 ```
 
-### State management <!-- omit in toc -->
+### State management<!-- omit in toc -->
 
 When building production quality applications, managing state becomes critical.
 
@@ -146,7 +146,7 @@ You will find a excelent documentation and a lot of examples here: https://blocl
 
 The pattern is used all over the app, you can see the usage for example by the theme, language and log view.
 
-### Persistence for small data <!-- omit in toc -->
+### Persistence for small data<!-- omit in toc -->
 
 If you have a relatively small collection of key-values to save locally.
 
@@ -156,13 +156,13 @@ If you have a relatively small collection of key-values to save locally.
 
 An example can be found in the app in the settings. The infos of the choosen language or theme by the customer is stored locally on the disk - so that it can load during the next startup - see [settings_repository.dart](./packages\repositories\lib\src\settings\settings_repository.dart)
 
-### Persistence for large data <!-- omit in toc -->
+### Persistence for large data<!-- omit in toc -->
 
-### API Requests via HTTP <!-- omit in toc -->
+### API Requests via HTTP<!-- omit in toc -->
 
-### Routing <!-- omit in toc -->
+### Routing<!-- omit in toc -->
 
-### Internationalizing <!-- omit in toc -->
+### Internationalizing<!-- omit in toc -->
 
 The hole App is unsing text from a translation file. So you can easily add new strings and translate the app in every language you want.
 
@@ -199,7 +199,7 @@ static final Map<String, AppLocale> locales = {
 };
 ```
 
-### Theming <!-- omit in toc -->
+### Theming<!-- omit in toc -->
 
 The themes and colors are defined in [lib\styles\colors.dart](./lib/styles/colors.dart) and [lib\styles\themes.dart](./lib/styles/themes.dart).
 
@@ -216,14 +216,14 @@ static final Map<String, AppTheme> themes = {
 
 Changing the theme itself by the user is implemented in the settings section. The views and the logic can be found in [lib\settings\settings.dart](./lib/settingssettings.dart)
 
-### Authentication <!-- omit in toc -->
+### Authentication<!-- omit in toc -->
 
 A dummy authentication process is implemented in the bloc pattern.
 
 It is mainly inspired by the following tutorial:
 https://bloclibrary.dev/#/flutterlogintutorial
 
-### Logging <!-- omit in toc -->
+### Logging<!-- omit in toc -->
 
 Handle the logging at one point in the app, with different log levels.
 
@@ -267,7 +267,7 @@ Logger.root.onRecord.listen(
 
 On the about page is the option to see the complete log.
 
-### Licences <!-- omit in toc -->
+### Licences<!-- omit in toc -->
 
 Showing the licenses is working out of the box with flutter:
 https://api.flutter.dev/flutter/material/showLicensePage.html
@@ -296,7 +296,7 @@ LicenseRegistry.addLicense(() async* {
 });
 ```
 
-### App and device info <!-- omit in toc -->
+### App and device info<!-- omit in toc -->
 
 It could ab always convenient to show somewhere the app verions/name/build and also soem device info - specific when you plan to support multiple systems. So the user themeselve can give these informattions easily when report an issue or you can just collect it automaticly.
 
@@ -307,9 +307,9 @@ It could ab always convenient to show somewhere the app verions/name/build and a
 
 On the about screen you can find the packages in action.
 
-### ListView Handling <!-- omit in toc -->
+### ListView Handling<!-- omit in toc -->
 
-### Lint and style guides <!-- omit in toc -->
+### Lint and style guides<!-- omit in toc -->
 
 Get a nice structure of the code and when working with vscode you can even format the code on save.
 
