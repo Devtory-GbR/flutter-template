@@ -1,0 +1,78 @@
+{
+  "title": "MyApp",
+  "@title": {
+    "description": "The title of the app"
+  },
+  "helloWorld": "Hello World!",
+  "@helloWorld": {
+    "description": "The conventional newborn programmer greeting"
+  },
+  "hello": "Hello {userName}",
+  "@hello": {
+    "description": "A message with a single parameter",
+    "placeholders": {
+      "userName": {
+        "type": "String",
+        "example": "Bob"
+      }
+    }
+  },
+  "error": "Oops something went wrong!",
+  "@error": {
+    "description": "Generic error text"
+  },
+  "noContent": "no content",
+  "@noContent": {
+    "description": "generic text for an empty list"
+  },
+  "dashboard": "Dashboard",
+  "@dashboard": {
+    "description": "Title dashboard Page"
+  },
+  "settings": "Settings",
+  "@settings": {
+    "description": "Title settings page"
+  },
+  "language": "Language",
+  "@language": {
+    "description": "Language chosen on settings page"
+  },
+  "languageChoice": "{choice, select, en {English} de {German} systemLanuage {System} other{}}",
+  "@languageChoice": {
+    "description": "Selected language",
+    "placeholders": {
+      "choice": {}
+    }
+  },
+  "theme": "Theme",
+  "@theme": {
+    "description": "Theme chosen on settings page"
+  },
+  "themeChoice": "{choice, select, light {Light} dark {Dark} other{}}",
+  "@themeChoice": {
+    "description": "Selected theme",
+    "placeholders": {
+      "choice": {}
+    }
+  },
+  "about": "About",
+  "license": "License",
+  "logout": "Logout",
+  "version": "Version: {version}",
+  "@version": {
+    "description": "Show the current version",
+    "placeholders": {
+      "version": {
+        "type": "String",
+        "example": "1.0.1"
+      }
+    }
+  },
+  "log": "Log",
+  "help": "Help",
+  "deviceInfo": "Device info",
+  "login": "Login",
+  "code": "Code",
+  "codeRequired": "code required",
+  "codeIncorrect": "Sry 😥. Code incorrect"
+}

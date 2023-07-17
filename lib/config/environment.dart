@@ -1,0 +1,42 @@
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:logging/logging.dart';
+
+import 'config.dart';
+
+class Environment {
+  static const String dev = 'DEV';
+  static const String staging = 'STAGING';
+  static const String prod = 'PROD';
+
+  static final Environment _instance = Environment._internal();
+  factory Environment() => _instance;
+
+  Environment._internal();
+
+  final _log = Logger('Environment');
+
+  BaseConfig? _config;
+
+  BaseConfig get config => _config!;
+  Map<String, String> get env => _config!.env;
+
+  Future<void> initConfig(String environment) async {
+    try {
+      await dotenv.load(fileName: '.env');
+    } catch (e, stackTrace) {
+      _log.severe(e.toString(), e, stackTrace);
+    }
+    _config = _getConfig(environment, dotenv.isInitialized ? dotenv.env : {});
+  }
+
+  BaseConfig _getConfig(String environment, Map<String, String> env) {
+    switch (environment) {
+      case Environment.prod:
+        return ConfigProduction(env: env);
+      case Environment.staging:
+        return ConfigStaging(env: env);
+      default:
+        return ConfigDevelopment(env: env);
+    }
+  }
+}

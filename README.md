@@ -37,7 +37,7 @@ All the packages are used based on compatibility for all plattforms, under a lic
 Just clone the project:
 
 ```
-git clone ....
+git clone https://github.com/Devtory-GbR/flutter-template.git
 ```
 
 Install the packages
@@ -72,16 +72,18 @@ That's all now just start to build your views.
 - [State management](#state-management) - with Flutter Bloc
 - [Persistence for small data](#persistence-for-small-data) - with a key-value storage
 - [Persistence for large data](#persistence-for-large-data) - local sqllite with drift
-- [API Requests](#api-requests-via-http) - via HTTP
+- [Logging](#logging) - even with storing localy for furture crash reports
+- [API Requests](#api-requests) - via HTTP and concept for global header
+- [Error Handling](#error-handling) - providing some helper classes to sow the error
 - [Routing](#routing) - with real URLs for a web app
-- [Internationalizing](#internationalizing)
-- [Theming](#theming)
-- [Authentication](#authentication)
-- [Logging](#logging)
-- [Licences](#licences)
-- [App and device Info](#app-and-device-info)
-- [ListView Handling](#listview-handling)
-- [Lint and style guides](#lint-and-style-guides)
+- [Internationalizing](#internationalizing) - changing by the user in the settings
+- [Theming](#theming) - changing by the user in the settings
+- [Form validation](#form-validation) - building efficent forms and handling the input
+- [Authentication](#authentication) - complete login flow by using a lot of concepts
+- [Licenses](#licences) - showing all used 3rd-Party Software and each license
+- [App and device Info](#app-and-device-info) - always good for debug purpose and further crash reports
+- [ListView Handling](#listview-handling) - some concepts for building nice lists in flutte with bloc pattern and animation
+- [Lint and style guides](#lint-and-style-guides) - must have in each colloberate software project!
 
 **What is missing?**
 
@@ -93,12 +95,12 @@ That's all now just start to build your views.
 
 ### Environment<!-- omit in toc -->
 
-You can run the app in different environment - dev, staging or prod.
-During the startup you can then load specific global params over an .env-File e.g. HTTP Url.
-
-**Used Packages**:
+📦 Packages:
 
 - flutter_dotenv (https://pub.dev/packages/flutter_dotenv)
+
+You can run the app in different environment - dev, staging or prod.
+During the startup you can then load specific global params over an .env-File e.g. HTTP Url.
 
 The specific environment is read during the starup from the startup param in the _main.dart_. And then during the bootstrap of the app the _.env_ File in the root-Folder is loaded.
 
@@ -132,15 +134,15 @@ print(Environment().config.isDev);
 
 ### State management<!-- omit in toc -->
 
+📦 Packages:
+
+- flutter_bloc (https://pub.dev/packages/flutter_bloc)
+
 When building production quality applications, managing state becomes critical.
 
 For Flutter you will find several approcheas and solutions - [here](https://docs.flutter.dev/data-and-backend/state-mgmt/options).
 
 I prefere to use the BLoC pattern (by _Felix Angelov_).
-
-**Used Packages**
-
-- flutter_bloc (https://pub.dev/packages/flutter_bloc)
 
 You will find a excelent documentation and a lot of examples here: https://bloclibrary.dev/.
 
@@ -148,88 +150,44 @@ The pattern is used all over the app, you can see the usage for example by the t
 
 ### Persistence for small data<!-- omit in toc -->
 
-If you have a relatively small collection of key-values to save locally.
-
-**Used Packages**:
+📦 Packages:
 
 - shared_preferences (https://pub.dev/packages/shared_preferences)
+
+If you have a relatively small collection of key-values to save locally.
 
 An example can be found in the app in the settings. The infos of the choosen language or theme by the customer is stored locally on the disk - so that it can load during the next startup - see [settings_repository.dart](./packages\repositories\lib\src\settings\settings_repository.dart)
 
 ### Persistence for large data<!-- omit in toc -->
 
-### API Requests via HTTP<!-- omit in toc -->
+📦 Packages:
 
-### Routing<!-- omit in toc -->
+- drift (https://pub.dev/packages/drift)
 
-### Internationalizing<!-- omit in toc -->
+A reactive library to store relational data in flutter applications.
 
-The hole App is unsing text from a translation file. So you can easily add new strings and translate the app in every language you want.
+**Important**: It works on all Plattforms.
 
-**Used Packages**:
+A code exmaple using drift can find in the [log_repository.dart](./packages/repositories/lib/src/log/log_repository.dart)
 
-- flutter_localizations (https://pub.dev/packages/flutter_localization)
-- intl (https://pub.dev/packages/intl)
+After defining your table model or changing you have to re-generate some code. To do so you have to run the following code
 
-A full documentation how it is setup can be found [here](https://docs.flutter.dev/accessibility-and-localization/internationalization), thx to the flutter dev team.
-
-Just put all you translations in _\lib\l10n_.
-
-If you add new strings or complete new language with a new .arb-File run the app again.
-
-Changing the language itself by the user is implemented in the settings section. The views and the logic can be found in [lib\settings\settings.dart](./lib/settingssettings.dart)
-
-The list of all available languges is defined over the supported languages based on the \*.arb-Files. The option for the system language is defined in the [locale_cubit.dart](./lib/settings/cubit/locale_cubit.dart)
-
-```dart
-static final systemLocale = AppLocale(
-      key: 'system',
-      desc: 'systemLanuage',
-      locale: Locale(
-        Platform.localeName.substring(0, 2),
-      ));
-
-static final Map<String, AppLocale> locales = {
-  'system': systemLocale,
-  for (var locale in AppLocalizations.supportedLocales)
-    locale.languageCode.substring(0, 2): AppLocale(
-        key: locale.languageCode.substring(0, 2),
-        desc: locale.languageCode.substring(0, 2),
-        locale: locale)
-};
 ```
+dart run build_runner build
 
-### Theming<!-- omit in toc -->
+# for continues rebuild
+dart run build_runner watch
 
-The themes and colors are defined in [lib\styles\colors.dart](./lib/styles/colors.dart) and [lib\styles\themes.dart](./lib/styles/themes.dart).
-
-Feel free to just adjust it or add complete new themes. That the user can choose your theme, don't forget it to add it in the [theme_cubit.dart](./lib/settings/cubit/theme_cubit.dart):
-
-```dart
-static final Map<String, AppTheme> themes = {
-  'primary':
-      AppTheme(key: 'primary', desc: 'light', theme: AppThemes.primary),
-  'primaryDark': AppTheme(
-      key: 'primaryDark', desc: 'dark', theme: AppThemes.primaryDarkTheme)
-};
+#IMPORTANT you have to run it in the path \packages\repositories. There were you added int the pubspec.yaml the drift package
 ```
-
-Changing the theme itself by the user is implemented in the settings section. The views and the logic can be found in [lib\settings\settings.dart](./lib/settingssettings.dart)
-
-### Authentication<!-- omit in toc -->
-
-A dummy authentication process is implemented in the bloc pattern.
-
-It is mainly inspired by the following tutorial:
-https://bloclibrary.dev/#/flutterlogintutorial
 
 ### Logging<!-- omit in toc -->
 
-Handle the logging at one point in the app, with different log levels.
-
-**Used Packages**:
+📦 Packages:
 
 - logging (https://pub.dev/packages/logging)
+
+Handle the logging at one point in the app, with different log levels.
 
 So far the logs will store in a local database (logs will be deleted after some time), with the idea that maybe the user can send a crash report or other debugging purpose. Also in the debug mode it will all printed in the console.
 
@@ -267,7 +225,163 @@ Logger.root.onRecord.listen(
 
 On the about page is the option to see the complete log.
 
-### Licences<!-- omit in toc -->
+### API Requests<!-- omit in toc -->
+
+📦 Packages:
+
+- http (https://pub.dev/packages/http)
+
+A composable, multi-platform, Future-based API for HTTP requests.
+
+Here we are not using [dio](https://pub.dev/packages/dio). These package use quite powerful but also quite heavy and not flutter favorite or from flutter themselves. It is made by the flutter cn community and now kinda the flutter cn branch.
+
+A good example how the API Request works can be seen in the [auth repository](./packages/repositories/lib/src/authentication/repository.dart) and [authentication_api.dart](./packages/repositories/lib/src/authentication/api/authentication_api.dart).
+
+Also so far a on low level HttpClient is setup for generic handling during the send process and buildung the URL - [http_client.dart](./packages/repositories/lib/src/http/http_client.dart). These is a good startpoint if you wanna add more advanced stuff, e.g. caching of network request.
+
+The Http Client is so far also coming with an nice observer and globale CLIENT_URL from the environment - usage can be seen in the [app.dart](./lib/app.dart).
+
+```
+// Set up Http Client
+MyAppHttpClient.clientURL = Environment().env['CLIENT_URL'] ?? '';
+MyAppHttpClient.observer =
+    AppHttpObserver(authenticationRepository: _authenticationRepository);
+
+```
+
+### Error Handling<!-- omit in toc -->
+
+A good Error Handling is the key off an efficient debugging.
+
+So far the app is implemented that each error ends up in the [app.dart](./lib/app.dart). You will find here a some Observers (BloC and Http) where you can handle Erros globally - like autmatic logout on a 401 HTTP Response for all Request or show an dialog for network issues during a request.
+
+But also all Flutter or unhandled plattform errors will catch an so far logged in the console and stored in the db:
+
+```
+    // Log global errors caught by flutter
+    FlutterError.onError = (FlutterErrorDetails details) {
+      FlutterError.presentError(details);
+      Logger('FlutterError').shout(details, details, details.stack);
+    };
+
+    // Log gloable erros not caught by flutter
+    PlatformDispatcher.instance.onError = (error, stack) {
+      Logger('PlatformDispatcher').shout(error, error, stack);
+      if (kDebugMode) {
+        return false;
+      } else {
+        return true;
+      }
+    };
+```
+
+### Routing<!-- omit in toc -->
+
+📦 Packages:
+
+- beamer (https://pub.dev/packages/beamer)
+
+A routing package built on top of Router and Navigator's pages API, supporting arbitrary nested navigation, guards and more.
+
+It is setup in the app for even full native web url support, even with guards for the login flow and a nice init screen at the beginning if you need some init heavy loading stuff.
+
+Just add your own routes or guards in the [routes.dart](./lib/routes.dart).
+
+### Internationalizing<!-- omit in toc -->
+
+📦 Packages:
+
+- flutter_localizations (https://pub.dev/packages/flutter_localization)
+- intl (https://pub.dev/packages/intl)
+
+The hole App is unsing text from a translation file. So you can easily add new strings and translate the app in every language you want.
+
+A full documentation how it is setup can be found [here](https://docs.flutter.dev/accessibility-and-localization/internationalization), thx to the flutter dev team.
+
+Just put all you translations in _\lib\l10n_.
+
+If you add new strings or complete new language with a new .arb-File run the app again.
+
+Changing the language itself by the user is implemented in the settings section. The views and the logic can be found in [lib\settings\settings.dart](./lib/settingssettings.dart)
+
+The list of all available languges is defined over the supported languages based on the \*.arb-Files. The option for the system language is defined in the [locale_cubit.dart](./lib/settings/cubit/locale_cubit.dart)
+
+```dart
+static final systemLocale = AppLocale(
+      key: 'system',
+      desc: 'systemLanuage',
+      locale: Locale(
+        Platform.localeName.substring(0, 2),
+      ));
+
+static final Map<String, AppLocale> locales = {
+  'system': systemLocale,
+  for (var locale in AppLocalizations.supportedLocales)
+    locale.languageCode.substring(0, 2): AppLocale(
+        key: locale.languageCode.substring(0, 2),
+        desc: locale.languageCode.substring(0, 2),
+        locale: locale)
+};
+```
+
+Usage
+
+```dart
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
+
+Text(AppLocalizations.of(context)!.title);
+
+```
+
+When making changes just run the follwing command an the file _app_localizations.dart_ will re-generated:
+
+```
+flutter gen-l10n
+```
+
+### Theming<!-- omit in toc -->
+
+The themes and colors are defined in [lib\styles\colors.dart](./lib/styles/colors.dart) and [lib\styles\themes.dart](./lib/styles/themes.dart).
+
+Feel free to just adjust it or add complete new themes. That the user can choose your theme, don't forget it to add it in the [theme_cubit.dart](./lib/settings/cubit/theme_cubit.dart):
+
+```dart
+static final Map<String, AppTheme> themes = {
+  'primary':
+      AppTheme(key: 'primary', desc: 'light', theme: AppThemes.primary),
+  'primaryDark': AppTheme(
+      key: 'primaryDark', desc: 'dark', theme: AppThemes.primaryDarkTheme)
+};
+```
+
+Changing the theme itself by the user is implemented in the settings section. The views and the logic can be found in [lib\settings\settings.dart](./lib/settingssettings.dart)
+
+### Form validation<!-- omit in toc -->
+
+📦 Packages:
+
+- formz (https://pub.dev/packages/formz)
+
+A good concept to seperate the representation of form and all the logic like validation and status of the form in a generic way. The best - it works fine with the bloc pattern and a good example can be seen in the login section. ([login views and bloc](./lib/login/login.dart))
+
+### Authentication<!-- omit in toc -->
+
+A dummy authentication flow is implemented in the bloc pattern.
+
+It is mainly inspired by the following tutorial:
+https://bloclibrary.dev/#/flutterlogintutorial
+
+Here you can find the code in he project:
+
+- [authentication_bloc.dart](./lib/authentication/authentication.dart)
+- [login views and bloc](./lib/login/login.dart)
+- [auth repository](./packages/repositories/lib/src/authentication/repository.dart)
+- [user repository](./packages/repositories/lib/src/user/repository.dart)
+
+Be aware a lot of key concepts take place here.
+
+### Licenses<!-- omit in toc -->
 
 Showing the licenses is working out of the box with flutter:
 https://api.flutter.dev/flutter/material/showLicensePage.html
@@ -298,24 +412,26 @@ LicenseRegistry.addLicense(() async* {
 
 ### App and device info<!-- omit in toc -->
 
-It could ab always convenient to show somewhere the app verions/name/build and also soem device info - specific when you plan to support multiple systems. So the user themeselve can give these informattions easily when report an issue or you can just collect it automaticly.
-
-**Used Packages**:
+📦 Packages:
 
 - package_info_plus (https://pub.dev/packages/package_info_plus)
 - device_info_plus (https://pub.dev/packages/device_info_plus)
+
+It could ab always convenient to show somewhere the app verions/name/build and also soem device info - specific when you plan to support multiple systems. So the user themeselve can give these informattions easily when report an issue or you can just collect it automaticly.
 
 On the about screen you can find the packages in action.
 
 ### ListView Handling<!-- omit in toc -->
 
+Under Construction, example can see in the logging page.
+
 ### Lint and style guides<!-- omit in toc -->
 
-Get a nice structure of the code and when working with vscode you can even format the code on save.
-
-**Used Packages**:
+📦 Packages:
 
 - flutter_lints (https://pub.dev/packages/flutter_lints)
+
+Get a nice structure of the code and when working with vscode you can even format the code on save.
 
 For the project the recommended settings for flutter projects are used. But you can edit it in the [analysis_options.yaml](./analysis_options.yaml)
 
@@ -324,6 +440,8 @@ For the project the recommended settings for flutter projects are used. But you 
 - [Martin Weber](https://github.com/ThunderAnimal)
 
 ## 🙏 Credits
+
+Thx to all contributers to the open source packages we used here. In future we will provide a nice list here for special thx to some people!
 
 ## 🧾 License
 
