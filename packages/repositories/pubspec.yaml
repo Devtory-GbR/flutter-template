@@ -3,19 +3,19 @@ description: Package which manages the hole repository domain.
 publish_to: none
 
 environment:
-  sdk: ">=2.19.0 <3.0.0"
+  sdk: ">=2.19.0 <4.0.0"
 dependencies:
   #generate the code `flutter pub run build_runner build`
-  drift: ^2.5.0
+  drift: ^2.10.0
   sqlite3_flutter_libs: ^0.5.0
   path_provider: ^2.0.0
-  path: ^1.8.2
+  path: ^1.8.3
   equatable: ^2.0.5
-  shared_preferences: ^2.0.17
+  shared_preferences: ^2.2.0
   uuid: ^3.0.7
-  http: ^0.13.6
-  meta: ^1.8.0
+  http: ^1.1.0
+  meta: ^1.9.1
 dev_dependencies:
-  lints: ^2.0.1
-  drift_dev: ^2.5.2
-  build_runner: ^2.3.3
+  lints: ^2.0.2
+  drift_dev: ^2.10.0
+  build_runner: ^2.4.6
