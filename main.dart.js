@@ -92645,7 +92645,7 @@ A.aD2.prototype={
 $0(){var s=0,r=A.F(t.n3),q,p
 var $async$$0=A.B(function(a,b){if(a===1)return A.C(b,r)
 while(true)switch(s){case 0:s=3
-return A.z(new A.arv(A.dQ("/sqlite3.wasm"),A.dQ("/drift_worker.js"),"logs_db",null,A.aD(t.Qr),A.a([B.m_],t.vy)).j_(0),$async$$0)
+return A.z(new A.arv(A.dQ("./sqlite3.wasm"),A.dQ("./drift_worker.js"),"logs_db",null,A.aD(t.Qr),A.a([B.m_],t.vy)).j_(0),$async$$0)
 case 3:p=b
 q=p.a
 s=1
