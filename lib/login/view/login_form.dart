@@ -19,14 +19,15 @@ class LoginForm extends StatelessWidget {
             ..hideCurrentSnackBar()
             ..showSnackBar(
               SnackBar(
-                  content: Text(AppLocalizations.of(context)!.codeIncorrect)),
+                content: Text(AppLocalizations.of(context)!.codeIncorrect),
+              ),
             );
         }
       },
       child: ConstrainedBox(
         constraints: const BoxConstraints(maxWidth: 450),
-        child: Column(
-          children: const [
+        child: const Column(
+          children: [
             _CodeInput(),
             Padding(padding: EdgeInsets.all(12)),
             _LoginButton(),

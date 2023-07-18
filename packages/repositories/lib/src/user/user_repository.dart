@@ -4,13 +4,10 @@ import 'package:repositories/src/user/repository.dart';
 import 'package:uuid/uuid.dart';
 
 class UserRepository {
-  User? _user;
-
-  Future<User?> getUser() async {
-    if (_user != null) return _user;
-    return Future.delayed(
-      const Duration(milliseconds: 300),
-      () => _user = User(id: const Uuid().v4()),
-    );
+  Future<User> getUser() async {
+    // TODO usally we would call here a real api to get the user data
+    // for now we just return a dummy user
+    await Future.delayed(const Duration(milliseconds: 300));
+    return User(id: const Uuid().v4(), name: "Max");
   }
 }

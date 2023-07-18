@@ -47,12 +47,13 @@ class AuthenticationBloc
       case AuthenticationStatus.authenticated:
         // Just empty user and then load the user
         emit(const AuthenticationState.authenticated(User.empty));
-        final user = await _tryGetUser();
-        return emit(
-          user != null
-              ? AuthenticationState.authenticated(user)
-              : const AuthenticationState.unauthenticated(),
-        );
+        try {
+          final user = await _userRepository.getUser();
+          return emit(AuthenticationState.authenticated(user));
+        } catch (_) {
+          emit(const AuthenticationState.unauthenticated());
+          rethrow;
+        }
       case AuthenticationStatus.unknown:
         return emit(const AuthenticationState.unknown());
     }
@@ -63,14 +64,5 @@ class AuthenticationBloc
     Emitter<AuthenticationState> emit,
   ) {
     _authenticationRepository.logOut();
-  }
-
-  Future<User?> _tryGetUser() async {
-    try {
-      final user = await _userRepository.getUser();
-      return user;
-    } catch (_) {
-      return null;
-    }
   }
 }

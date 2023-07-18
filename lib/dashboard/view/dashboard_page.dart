@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:myapp/authentication/authentication.dart';
 
 class DashboardPage extends StatelessWidget {
   const DashboardPage({super.key});
@@ -11,7 +13,11 @@ class DashboardPage extends StatelessWidget {
         title: Text(AppLocalizations.of(context)!.dashboard),
       ),
       body: Center(
-        child: Text(AppLocalizations.of(context)!.hello('Sophie')),
+        child: BlocBuilder<AuthenticationBloc, AuthenticationState>(
+          builder: (context, state) {
+            return Text(AppLocalizations.of(context)!.hello(state.user.name));
+          },
+        ),
       ),
     );
   }

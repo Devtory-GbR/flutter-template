@@ -33,6 +33,11 @@ class LoginPage extends StatelessWidget {
                         AppLocalizations.of(context)!.title,
                         style: Theme.of(context).textTheme.headlineLarge,
                       ),
+                      const Padding(padding: EdgeInsets.only(top: 12)),
+                      Text(
+                        '${AppLocalizations.of(context)!.code}: max',
+                        style: Theme.of(context).textTheme.bodyMedium,
+                      ),
                       const Padding(padding: EdgeInsets.only(top: 64)),
                     ],
                   ),
