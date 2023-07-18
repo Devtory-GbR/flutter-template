@@ -46,6 +46,7 @@ flutter:
   uses-material-design: true
   assets:
     - assets/
+    - assets/images/
     - .env
     - fonts/clicker-script/
   # here you can add just new fonts if you want
