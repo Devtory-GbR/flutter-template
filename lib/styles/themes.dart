@@ -58,5 +58,7 @@ class AppThemes {
           borderRadius: BorderRadius.all(Radius.circular(8.0))),
     ),
     dividerTheme: const DividerThemeData(indent: 48.0, space: 1.0),
+    snackBarTheme: const SnackBarThemeData(
+        contentTextStyle: TextStyle(color: Colors.white)),
   );
 }
