@@ -6,11 +6,11 @@
 <p align="center"><a href="https://strapi.io/demo">Try live demo</a></p>
 <br />
 
-![](flutter_bootstrap.gif)
-
 **SDK** | ✔️ Flutter
 
 **Plattform** | ✔️ Android ✔️ IOS ✔️ Linux ✔️ MACOS ✔️ WEB ✔️ WINDOWS
+
+![](screenshots/sample.gif)
 
 _Table of Content_
 
