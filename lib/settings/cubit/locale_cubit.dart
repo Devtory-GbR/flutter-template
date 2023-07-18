@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -19,9 +17,7 @@ class LocaleCubit extends Cubit<AppLocale> {
   static final systemLocale = AppLocale(
       key: 'system',
       desc: 'systemLanuage',
-      locale: Locale(
-        Platform.localeName.substring(0, 2),
-      ));
+      locale: WidgetsBinding.instance.platformDispatcher.locale);
 
   // for the desc, dont forget to add the key-code of the language as desc in app_*.arb files
   // so far only de and en are added

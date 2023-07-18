@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:beamer/beamer.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -156,7 +154,7 @@ class AppHttpObserver extends HttpObserver {
     // At these point we just assume, then when the Http Response is 401
     // the auth token is no longe valid --> the we will globally log the user out
     // so that we don't have to check it for each request
-    if (error.statusCode == HttpStatus.unauthorized) {
+    if (error.statusCode == 401) {
       _authenticationRepository.logOut();
     }
   }
