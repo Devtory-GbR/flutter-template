@@ -48,9 +48,7 @@ class AppThemes {
           statusBarBrightness: Brightness.light,
           statusBarIconBrightness: Brightness.light),
       titleTextStyle: TextStyle(
-        fontFamily: "Clicker Script",
-        fontSize: 41,
-      ),
+          fontFamily: "Clicker Script", fontSize: 41, color: Colors.white),
     ),
     cardTheme: const CardTheme(
       margin: EdgeInsets.all(8.0),
