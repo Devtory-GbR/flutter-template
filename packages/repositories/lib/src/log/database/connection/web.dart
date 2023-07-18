@@ -1,12 +1,20 @@
 import 'package:drift/drift.dart';
-import 'package:drift/web.dart';
+import 'package:drift/wasm.dart';
 
 /// Obtains a database connection for running drift on the web.
 DatabaseConnection connect() {
-  return DatabaseConnection.delayed(Future.sync(() async {
-    final storage = await DriftWebStorage.indexedDbIfSupported('logs');
-    final databaseImpl = WebDatabase.withStorage(storage);
+  return DatabaseConnection.delayed(Future(() async {
+    final db = await WasmDatabase.open(
+      databaseName: 'logs_db',
+      sqlite3Uri: Uri.parse('/sqlite3.wasm'),
+      driftWorkerUri: Uri.parse('/drift_worker.js'),
+    );
 
-    return DatabaseConnection(databaseImpl);
+    if (db.missingFeatures.isNotEmpty) {
+      // throw Error('Using ${db.chosenImplementation} due to unsupported '
+      //     'browser features: ${db.missingFeatures}');
+    }
+
+    return db.resolvedExecutor;
   }));
 }
