@@ -3,7 +3,7 @@
 <h3 align="center">Flutter project template for easy start</h3>
 <p align="center">Just clone the project and build your app on top of it!!! <br /> With a lot of key concepts and features which almost each app needs.</p>
 <p align="center"></p>
-<p align="center"><a href="https://strapi.io/demo">Try live demo</a></p>
+<p align="center"><a href="https://devtory-gbr.github.io/flutter-template/">Try live demo</a></p>
 <br />
 
 **SDK** | ✔️ Flutter
@@ -95,14 +95,10 @@ That's all now just start to build your views.
 
 ### Environment<!-- omit in toc -->
 
-📦 Packages:
-
-- flutter_dotenv (https://pub.dev/packages/flutter_dotenv)
-
 You can run the app in different environment - dev, staging or prod.
-During the startup you can then load specific global params over an .env-File e.g. HTTP Url.
+During the startup you can then load specific global params over an env.json-File e.g. HTTP Url.
 
-The specific environment is read during the starup from the startup param in the _main.dart_. And then during the bootstrap of the app the _.env_ File in the root-Folder is loaded.
+The specific environment is read during the starup from the startup param in the _main.dart_. And then during the bootstrap of the app the _env.json_ File in the root-Folder is loaded.
 
 _main.dart_
 
@@ -114,10 +110,12 @@ const env = String.fromEnvironment('ENV', defaultValue: Environment.dev);
 await Application(env: env).bootstrapApp();
 ```
 
-_.env_
+_env.json_
 
 ```
-CLIENT_URL=https://api.myapp.com
+{
+  "CLIENT_URL": "https://api.myapp.com/v1/"
+}
 ```
 
 _exmaple_
@@ -131,6 +129,11 @@ print(Environment().env['CLIENT_URL']);
 // which you dan't wanna editiable via .env
 print(Environment().config.isDev);
 ```
+
+_Note_: Usally we just use the package [flutter_dotenv](https://pub.dev/packages/flutter_dotenv) and load the config with a .env-File. But these ends up in some issues:
+
+1. the programer believes that he can store sensitive informations like API-Key --> these could easily read in web or the app bundle
+2. it need some extra configuration at the web server to allow to read a .env file
 
 ### State management<!-- omit in toc -->
 
@@ -157,6 +160,8 @@ The pattern is used all over the app, you can see the usage for example by the t
 If you have a relatively small collection of key-values to save locally.
 
 An example can be found in the app in the settings. The infos of the choosen language or theme by the customer is stored locally on the disk - so that it can load during the next startup - see [settings_repository.dart](./packages\repositories\lib\src\settings\settings_repository.dart)
+
+But even the token for the auth flow is stored. So that an the next startup of the app or reload the webstite --> the user is still logged in. [authentication_repository.dart](./packages/repositories/lib/src/authentication/authentication_repository.dart)
 
 ### Persistence for large data<!-- omit in toc -->
 
@@ -369,7 +374,7 @@ A good concept to seperate the representation of form and all the logic like val
 
 A dummy authentication flow is implemented in the bloc pattern.
 
-It is mainly inspired by the following tutorial:
+The base is mainly inspired by the following tutorial:
 https://bloclibrary.dev/#/flutterlogintutorial
 
 Here you can find the code in he project:
@@ -379,7 +384,14 @@ Here you can find the code in he project:
 - [auth repository](./packages/repositories/lib/src/authentication/repository.dart)
 - [user repository](./packages/repositories/lib/src/user/repository.dart)
 
-Be aware a lot of key concepts take place here.
+But not only just simple views are implemented, furthermore the auth flow is full designed:
+
+- storing the token locally
+- loading and checking the token on next startup
+- guards and redirecting if the tken is invalid
+- setting the token to the http-client for requests
+- loading userdata depending on the auth state
+- checking each http request if the token is invalid and logout
 
 ### Licenses<!-- omit in toc -->
 

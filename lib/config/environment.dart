@@ -1,4 +1,6 @@
-import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'dart:convert';
+
+import 'package:flutter/services.dart';
 import 'package:logging/logging.dart';
 
 import 'config.dart';
@@ -18,18 +20,19 @@ class Environment {
   BaseConfig? _config;
 
   BaseConfig get config => _config!;
-  Map<String, String> get env => _config!.env;
+  Map<String, dynamic> get env => _config!.env;
 
   Future<void> initConfig(String environment) async {
+    Map<String, dynamic> env = {};
     try {
-      await dotenv.load(fileName: '.env');
+      env = jsonDecode(await rootBundle.loadString('./env.json'));
     } catch (e, stackTrace) {
       _log.severe(e.toString(), e, stackTrace);
     }
-    _config = _getConfig(environment, dotenv.isInitialized ? dotenv.env : {});
+    _config = _getConfig(environment, env);
   }
 
-  BaseConfig _getConfig(String environment, Map<String, String> env) {
+  BaseConfig _getConfig(String environment, Map<String, dynamic> env) {
     switch (environment) {
       case Environment.prod:
         return ConfigProduction(env: env);

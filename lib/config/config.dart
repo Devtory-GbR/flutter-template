@@ -5,7 +5,7 @@ abstract class BaseConfig {
   bool get isStaging;
   bool get isProd;
 
-  final Map<String, String> env;
+  final Map<String, dynamic> env;
 }
 
 class ConfigDevelopment extends BaseConfig {
