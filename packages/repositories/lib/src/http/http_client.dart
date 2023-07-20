@@ -27,27 +27,21 @@ class MyAppHttpClient extends BaseClient {
       request.headers['Authorization'] = MyAppHttpClient.authToken;
     }
     observer.onSend(request);
-    try {
-      final streamResponse = await _inner.send(request);
-      if (streamResponse.statusCode < 400) {
-        return streamResponse;
-      }
+    final streamResponse = await _inner.send(request);
 
-      var message =
-          'Request to ${request.url} failed with status ${streamResponse.statusCode}';
-      if (streamResponse.reasonPhrase != null) {
-        message = '$message: ${streamResponse.reasonPhrase}';
-      }
-      final httpException = HttpException(
-          message, request.url.toString(), streamResponse.statusCode);
-      observer.onHttpError(httpException, StackTrace.current);
-      throw httpException;
-    } on ClientException catch (e, stackTrace) {
-      final networkException = NetworkException(e.message, e.uri?.toString());
-      observer.onClientError(networkException, stackTrace);
-      throw networkException;
-    } catch (e) {
-      rethrow;
+    if (streamResponse.statusCode < 400) {
+      return streamResponse;
     }
+
+    var message =
+        'Request to ${request.url} failed with status ${streamResponse.statusCode}';
+    if (streamResponse.reasonPhrase != null) {
+      message = '$message: ${streamResponse.reasonPhrase}';
+    }
+
+    final httpException = HttpException(
+        message, request.url.toString(), streamResponse.statusCode);
+    observer.onHttpErrorResponse(request, streamResponse.statusCode);
+    throw httpException;
   }
 }

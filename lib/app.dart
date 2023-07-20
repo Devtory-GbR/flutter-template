@@ -59,6 +59,8 @@ class Application {
     };
 
     // Log gloable erros not caught by flutter
+    // usally we should not reach these point --> so far it should be catche
+    // in the bloc's logic
     PlatformDispatcher.instance.onError = (error, stack) {
       Logger('PlatformDispatcher').shout(error, error, stack);
       if (kDebugMode) {
@@ -87,9 +89,6 @@ class Application {
     //Set the default locale
     intl.Intl.defaultLocale = 'en_US';
 
-    // Set up global logger for the bloc's und cubit's
-    Bloc.observer = AppBlocObserver();
-
     // finaly start the app
     runApp(const MyApp());
 
@@ -103,6 +102,9 @@ class AppBlocObserver extends BlocObserver {
 
   final GlobalKey<ScaffoldMessengerState> scaffoldKey;
   final GlobalKey<NavigatorState> navigatorKey;
+
+  AppBlocObserver({required this.scaffoldKey, required this.navigatorKey});
+
   @override
   void onCreate(BlocBase bloc) {
     super.onCreate(bloc);
@@ -131,6 +133,31 @@ class AppBlocObserver extends BlocObserver {
   void onError(BlocBase bloc, Object error, StackTrace stackTrace) {
     log.severe('onError -- ${bloc.runtimeType}, $error', error, stackTrace);
     super.onError(bloc, error, stackTrace);
+
+    // you can sho wa snack bar
+    if (scaffoldKey.currentContext != null) {
+      scaffoldKey.currentState!
+        ..hideCurrentSnackBar()
+        ..showSnackBar(
+          SnackBar(
+            content:
+                Text(AppLocalizations.of(scaffoldKey.currentContext!)!.error),
+          ),
+        );
+    }
+
+    // or mayb just a dialog
+    if (navigatorKey.currentContext != null) {
+      showDialog(
+        context: navigatorKey.currentContext!,
+        builder: (context) => AlertDialog(
+          title: Text(AppLocalizations.of(context)!.error),
+          content: Text(
+            error.toString(),
+          ),
+        ),
+      );
+    }
   }
 }
 
@@ -149,22 +176,14 @@ class AppHttpObserver extends HttpObserver {
   }
 
   @override
-  void onHttpError(HttpException error, StackTrace stackTrace) {
-    log.severe('onHttpError -- ${error.message}', error, stackTrace);
-    super.onHttpError(error, stackTrace);
-
+  void onHttpErrorResponse(BaseRequest request, int statusCode) {
     // At these point we just assume, then when the Http Response is 401
     // the auth token is no longe valid --> the we will globally log the user out
     // so that we don't have to check it for each request
-    if (error.statusCode == 401) {
+    if (statusCode == 401) {
       _authenticationRepository.logOut();
     }
-  }
-
-  @override
-  void onClientError(NetworkException error, StackTrace stackTrace) {
-    log.severe('onClientError -- ${error.message}', error, stackTrace);
-    super.onClientError(error, stackTrace);
+    super.onHttpErrorResponse(request, statusCode);
   }
 }
 
@@ -193,6 +212,11 @@ class _MyAppState extends State<MyApp> {
     _authenticationRepository = AuthenticationRepository();
     _userRepository = UserRepository();
     _loggerRepository = LoggerRepository.instance;
+
+    // Set up global logger for the bloc's
+    // and gloabl error handling to show on dialog
+    Bloc.observer =
+        AppBlocObserver(scaffoldKey: scaffoldKey, navigatorKey: navigatorKey);
 
     // Set up Http Client
     MyAppHttpClient.clientURL = Environment().env['CLIENT_URL'] ?? '';

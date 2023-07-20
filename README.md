@@ -256,35 +256,154 @@ MyAppHttpClient.observer =
 
 ### Error Handling<!-- omit in toc -->
 
-A good Error Handling is the key off an efficient debugging.
+So far the app is implemented that each error ends up in the [app.dart](./lib/app.dart). You will find here a some Observers (BloC and Http) where you can handle Errors globally
 
-So far the app is implemented that each error ends up in the [app.dart](./lib/app.dart). You will find here a some Observers (BloC and Http) where you can handle Erros globally - like autmatic logout on a 401 HTTP Response for all Request or show an dialog for network issues during a request.
+e.g. automatic logout on a 401 HTTP Response in the HttpObserve:
 
-But also all Flutter or unhandled plattform errors will catch an so far logged in the console and stored in the db:
+```dart
+class AppHttpObserver extends HttpObserver {
+  final log = Logger('AppHttpObserver');
 
+  final AuthenticationRepository _authenticationRepository;
+
+  AppHttpObserver({required AuthenticationRepository authenticationRepository})
+      : _authenticationRepository = authenticationRepository;
+
+  @override
+  void onSend(BaseRequest request) {
+    super.onSend(request);
+    log.fine('onSend -- ${request.url}');
+  }
+
+  @override
+  void onHttpErrorResponse(BaseRequest request, int statusCode) {
+    // At these point we just assume, then when the Http Response is 401
+    // the auth token is no longe valid --> the we will globally log the user out
+    // so that we don't have to check it for each request
+    if (statusCode == 401) {
+      _authenticationRepository.logOut();
+    }
+    super.onHttpErrorResponse(request, statusCode);
+  }
+}
 ```
-    // Log global errors caught by flutter
-    FlutterError.onError = (FlutterErrorDetails details) {
-      FlutterError.presentError(details);
-      Logger('FlutterError').shout(details, details, details.stack);
-    };
 
-    // Log gloable erros not caught by flutter
-    PlatformDispatcher.instance.onError = (error, stack) {
-      Logger('PlatformDispatcher').shout(error, error, stack);
-      if (kDebugMode) {
-        return false;
-      } else {
-        return true;
-      }
-    };
+or
+
+```dart
+class AppBlocObserver extends BlocObserver {
+  final log = Logger('AppBlocObserver');
+
+  final GlobalKey<ScaffoldMessengerState> scaffoldKey;
+  final GlobalKey<NavigatorState> navigatorKey;
+
+  AppBlocObserver({required this.scaffoldKey, required this.navigatorKey});
+
+  @override
+  void onCreate(BlocBase bloc) {
+    super.onCreate(bloc);
+    log.fine('onCreate -- ${bloc.runtimeType}');
+  }
+
+  @override
+  void onEvent(Bloc bloc, Object? event) {
+    super.onEvent(bloc, event);
+    log.fine('onEvent -- ${bloc.runtimeType}, $event');
+  }
+
+  @override
+  void onChange(BlocBase bloc, Change change) {
+    super.onChange(bloc, change);
+    log.fine('onChange -- ${bloc.runtimeType}, $change');
+  }
+
+  @override
+  void onTransition(Bloc bloc, Transition transition) {
+    super.onTransition(bloc, transition);
+    log.fine('onTransition -- ${bloc.runtimeType}, $transition');
+  }
+
+  @override
+  void onError(BlocBase bloc, Object error, StackTrace stackTrace) {
+    log.severe('onError -- ${bloc.runtimeType}, $error', error, stackTrace);
+    super.onError(bloc, error, stackTrace);
+
+    // you can show a snack bar
+    // if (scaffoldKey.currentContext != null) {
+    //   scaffoldKey.currentState!
+    //     ..hideCurrentSnackBar()
+    //     ..showSnackBar(
+    //       SnackBar(
+    //         content:
+    //             Text(AppLocalizations.of(scaffoldKey.currentContext!)!.error),
+    //       ),
+    //     );
+    // }
+
+    // or maybe just a dialog
+    if (navigatorKey.currentContext != null) {
+      showDialog(
+        context: navigatorKey.currentContext!,
+        builder: (context) => AlertDialog(
+          title: Text(AppLocalizations.of(context)!.error),
+          content: Text(
+            error.toString(),
+          ),
+        ),
+      );
+    }
+  }
+}
+```
+
+The key concept is, that mainly the erros will throw in the repository package during the network or database requests. The repositories call will be done by the BloC/Cubit.
+So at the end they will catch these errors - the expected error (e.g. wrong credentials) will handle by the bloc themeselves. All other errors will forwarded to the BlocObserver to handle it globally.
+
+LoginBloc - [login_bloc.dart](./lib/login/bloc/bloc/login_bloc.dart):
+
+```dart
+emit(state.copyWith(status: FormzSubmissionStatus.inProgress));
+try {
+  await _authenticationRepository.logIn(
+    username: state.code.value,
+    password: '',
+  );
+  emit(state.copyWith(status: FormzSubmissionStatus.success));
+} on UserPasswordIncorrectException catch (_) {
+  // Failure state will show an error on login page --> BloCListener
+  emit(state.copyWith(status: FormzSubmissionStatus.failure));
+} catch (e, stackTrace) {
+  emit(state.copyWith(status: FormzSubmissionStatus.initial));
+  // will trigger AppBlocObserver onError to handle showing the erro globally
+  addError(e, stackTrace);
+}
+```
+
+All other not catched errors will catched in the [app.dart](./lib/app.dart) and so far logged in the console and stored in the db:
+
+```dart
+// Log global errors caught by flutter
+FlutterError.onError = (FlutterErrorDetails details) {
+  FlutterError.presentError(details);
+  Logger('FlutterError').shout(details, details, details.stack);
+};
+
+// Log gloable erros not caught by flutter
+PlatformDispatcher.instance.onError = (error, stack) {
+  Logger('PlatformDispatcher').shout(error, error, stack);
+  if (kDebugMode) {
+    return false;
+  } else {
+    return true;
+  }
+};
 ```
 
 ### Routing<!-- omit in toc -->
 
 📦 Packages:
 
-- beamer (https://pub.dev/packages/beamer)
+- go_router (https://pub.dev/packages/go_router)
 
 A routing package built on top of Router and Navigator's pages API, supporting arbitrary nested navigation, guards and more.
 

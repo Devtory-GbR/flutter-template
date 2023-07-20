@@ -46,11 +46,13 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
           password: '',
         );
         emit(state.copyWith(status: FormzSubmissionStatus.success));
-      } on UserPasswordIncorrectException catch (_) {
+      } on UserPasswordIncorrectException catch (e) {
+        // Failure state will show an error on login page --> BloCListener
         emit(state.copyWith(status: FormzSubmissionStatus.failure));
-      } catch (_) {
-        emit(state.copyWith(status: FormzSubmissionStatus.failure));
-        rethrow;
+      } catch (e, stackTrace) {
+        emit(state.copyWith(status: FormzSubmissionStatus.initial));
+        // will trigger AppBlocObserver onError to handle showing the erro globally
+        addError(e, stackTrace);
       }
     }
   }
