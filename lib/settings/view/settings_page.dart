@@ -1,7 +1,7 @@
-import 'package:beamer/beamer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:go_router/go_router.dart';
 import 'package:myapp/authentication/authentication.dart';
 import 'package:myapp/settings/settings.dart';
 import 'package:myapp/widgets/widgets.dart';
@@ -40,7 +40,7 @@ class _SettingsListState extends State<_SettingsList> {
                   title: Text(AppLocalizations.of(context)!.language),
                   subtitle: Text(AppLocalizations.of(context)!
                       .languageChoice(appLocale.desc)),
-                  onTap: () => context.beamToNamed('/locales'));
+                  onTap: () => context.push('/locales'));
             }),
             BlocBuilder<ThemeCubit, AppTheme>(
               builder: (context, appTheme) {
@@ -49,7 +49,7 @@ class _SettingsListState extends State<_SettingsList> {
                   title: Text(AppLocalizations.of(context)!.theme),
                   subtitle: Text(
                       AppLocalizations.of(context)!.themeChoice(appTheme.desc)),
-                  onTap: () => context.beamToNamed('/themes'),
+                  onTap: () => context.push('/themes'),
                 );
               },
             ),
@@ -60,7 +60,7 @@ class _SettingsListState extends State<_SettingsList> {
             ListTile(
               leading: const Icon(Icons.info),
               title: Text(AppLocalizations.of(context)!.about),
-              onTap: () => context.beamToNamed('/about'),
+              onTap: () => context.push('/about'),
             ),
           ],
         ),

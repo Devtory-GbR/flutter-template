@@ -1,7 +1,7 @@
-import 'package:beamer/beamer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:go_router/go_router.dart';
 import 'package:myapp/about/about.dart';
 import 'package:myapp/widgets/widgets.dart';
 import 'package:package_info_plus/package_info_plus.dart';
@@ -56,12 +56,12 @@ class AboutPage extends StatelessWidget {
                     ListTile(
                       leading: const Icon(Icons.description),
                       title: Text(AppLocalizations.of(context)!.log),
-                      onTap: () => context.beamToNamed('/about/logs'),
+                      onTap: () => context.push('/about/logs'),
                     ),
                     ListTile(
                       leading: const Icon(Icons.device_unknown),
                       title: Text(AppLocalizations.of(context)!.deviceInfo),
-                      onTap: () => context.beamToNamed('/about/device_info'),
+                      onTap: () => context.push('/about/device_info'),
                     ),
                     ListTile(
                       leading: const Icon(Icons.help),

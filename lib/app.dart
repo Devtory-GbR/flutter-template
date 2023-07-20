@@ -1,10 +1,10 @@
-import 'package:beamer/beamer.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart' as intl;
 import 'package:logging/logging.dart';
 import 'package:myapp/authentication/authentication.dart';
@@ -52,9 +52,6 @@ class Application {
       },
     );
 
-    //Clean olf log olde then 7 days --> so we don't messup the device
-    await LoggerRepository.instance.cleanOldLogs();
-
     // Log global errors caught by flutter
     FlutterError.onError = (FlutterErrorDetails details) {
       FlutterError.presentError(details);
@@ -70,6 +67,9 @@ class Application {
         return true;
       }
     };
+
+    //Clean olf log olde then 7 days --> so we don't messup the device
+    await LoggerRepository.instance.cleanOldLogs();
 
     // Set up the Environment
     await Environment().initConfig(env);
@@ -101,6 +101,8 @@ class Application {
 class AppBlocObserver extends BlocObserver {
   final log = Logger('AppBlocObserver');
 
+  final GlobalKey<ScaffoldMessengerState> scaffoldKey;
+  final GlobalKey<NavigatorState> navigatorKey;
   @override
   void onCreate(BlocBase bloc) {
     super.onCreate(bloc);
@@ -181,6 +183,9 @@ class _MyAppState extends State<MyApp> {
 
   final log = Logger('App');
 
+  final scaffoldKey = GlobalKey<ScaffoldMessengerState>();
+  final navigatorKey = GlobalKey<NavigatorState>();
+
   @override
   void initState() {
     super.initState();
@@ -236,22 +241,23 @@ class _MyAppState extends State<MyApp> {
               create: (_) =>
                   LocaleCubit(localePersistence: _settingsRepository)),
         ],
-        child: const MyAppView(),
+        child: MyAppView(scaffoldKey: scaffoldKey, navigatorKey: navigatorKey),
       ),
     );
   }
 }
 
 class MyAppView extends StatelessWidget {
-  const MyAppView({super.key});
+  final GlobalKey<ScaffoldMessengerState> scaffoldKey;
+  final GlobalKey<NavigatorState> navigatorKey;
 
-  static final routerDelegate = BeamerDelegate(
-    initialPath: '/',
-    locationBuilder: RoutesLocationBuilder(
-      routes: appRoutes,
-    ),
-    guards: appGuards,
-  );
+  final GoRouter _router;
+  MyAppView({super.key, required this.scaffoldKey, required this.navigatorKey})
+      : _router = GoRouter(
+            initialLocation: '/',
+            navigatorKey: navigatorKey,
+            routes: appRoutes,
+            redirect: appRedirect);
 
   @override
   Widget build(BuildContext context) {
@@ -259,12 +265,12 @@ class MyAppView extends StatelessWidget {
       listeners: [
         BlocListener<InitializedCubit, bool>(
           listener: (context, state) {
-            routerDelegate.update();
+            _router.refresh();
           },
         ),
         BlocListener<AuthenticationBloc, AuthenticationState>(
           listener: (context, state) {
-            routerDelegate.update();
+            _router.refresh();
           },
         ),
       ],
@@ -273,13 +279,11 @@ class MyAppView extends StatelessWidget {
           return BlocBuilder<LocaleCubit, AppLocale>(
             builder: (_, appLocale) {
               return MaterialApp.router(
+                scaffoldMessengerKey: scaffoldKey,
                 onGenerateTitle: (context) =>
                     AppLocalizations.of(context)?.title ?? '',
                 theme: appTheme.theme,
-                routerDelegate: routerDelegate,
-                routeInformationParser: BeamerParser(),
-                backButtonDispatcher: BeamerBackButtonDispatcher(
-                    delegate: routerDelegate, alwaysBeamBack: false),
+                routerConfig: _router,
                 localizationsDelegates: AppLocalizations.localizationsDelegates,
                 // feel free to just add more language support to your app
                 // for that just create a new app_XX.arb file in lib/i10n
