@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:formz/formz.dart';
-import 'package:myapp/login/bloc/bloc/login_bloc.dart';
+import 'package:myapp/login/bloc/login_bloc.dart';
 
 class LoginForm extends StatelessWidget {
   const LoginForm({
