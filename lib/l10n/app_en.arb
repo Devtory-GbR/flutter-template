@@ -17,10 +17,22 @@
       }
     }
   },
-  "error": "Oops something went wrong!",
+  "ok": "ok",
+  "errorTitle": "Oops! Unexpected error 😭",
+  "@errorTitle": {
+    "description": "Generic error title"
+  },
+  "error": "Looks like something went completely wrong!\nBut don't worry - it can happens to the best of us - and just happend to you.\n\nMaybe try again or go on 'help'.",
   "@error": {
     "description": "Generic error text"
   },
+  "errorHttpTitle": "Oops! HTTP Error 😢",
+  "errorHttp": "Looks like you try to make a request with insufficient permissions or parameters.\n\nMaybe try again or go on 'help'.",
+  "errorServerTitle": "Oops! Server Error 😱",
+  "errorServer": "Looks like you request cause on error on the server - hope you don't crashed it...\n\nMaybe try again or go on 'help'.",
+  "errorNetworkTitle": "Oops! Network Error 🥺",
+  "errorNetwork": "Looks like you request could not send. Maybe problem with the network?\n\nTry again or go on 'help'.",
+  "errorInvalidTokenAutoLogout": "Session is no longer available.\nYou have been logged out automatically.",
   "noContent": "no content",
   "@noContent": {
     "description": "generic text for an empty list"
@@ -29,6 +41,10 @@
   "@dashboard": {
     "description": "Title dashboard Page"
   },
+  "simulateHardError": "simulate hard error",
+  "simulateClientError": "simulate http client error",
+  "simulateHttpError": "simulate http status error",
+  "simulateTokenInvalidError": "simulate invalid token error",
   "settings": "Settings",
   "@settings": {
     "description": "Title settings page"
@@ -74,5 +90,6 @@
   "login": "Login",
   "code": "Code",
   "codeRequired": "code required",
-  "codeIncorrect": "Sry 😥. Code incorrect"
+  "codeIncorrect": "Sry 😥. Code incorrect",
+  "debugTitle": "Debug 🐛"
 }

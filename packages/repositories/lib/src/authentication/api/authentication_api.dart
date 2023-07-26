@@ -37,6 +37,9 @@ class AuthenticationApiProvider {
   }
 
   Future<void> logout() async {
-    await client.post(client.buildUri(_urlLogout));
+    await client.post(
+      client.buildUri('/posts'),
+      body: {},
+    );
   }
 }

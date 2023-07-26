@@ -1,10 +1,13 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:logging/logging.dart';
 import 'package:repositories/repositories.dart';
 
 class InitializedCubit extends Cubit<bool> {
+  final log = Logger('InitializedCubit');
+
   InitializedCubit() : super(false);
 
-  initApp({
+  void initApp({
     required AuthenticationRepository authenticationRepository,
   }) async {
     // At these point you can do all the heavy stuff to init the app
@@ -12,8 +15,13 @@ class InitializedCubit extends Cubit<bool> {
     // and show each step or whatever you prefer
     // for now we wanna just init the auth-repo to be sure if there is a token and if it is still valid
     // only after that we want to show the real app, so that the routing and guards working fine
-
-    await authenticationRepository.init();
+    try {
+      await authenticationRepository.init();
+    } catch (e, stackTrace) {
+      // At these point we want to catch the error
+      // so that on starting screen not already some weird messages plop up
+      log.severe('InitError --  $e', e, stackTrace);
+    }
 
     // just some delay so that the screen is not changng so fast... :D
     await Future.delayed(const Duration(microseconds: 300));

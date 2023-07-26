@@ -9,6 +9,7 @@ import 'package:intl/intl.dart' as intl;
 import 'package:logging/logging.dart';
 import 'package:myapp/authentication/authentication.dart';
 import 'package:myapp/config/environment.dart';
+import 'package:myapp/error/error.dart';
 import 'package:myapp/init/init.dart';
 import 'package:myapp/routes.dart';
 import 'package:myapp/settings/settings.dart';
@@ -54,8 +55,8 @@ class Application {
 
     // Log global errors caught by flutter
     FlutterError.onError = (FlutterErrorDetails details) {
-      FlutterError.presentError(details);
       Logger('FlutterError').shout(details, details, details.stack);
+      FlutterError.presentError(details);
     };
 
     // Log gloable erros not caught by flutter
@@ -134,29 +135,31 @@ class AppBlocObserver extends BlocObserver {
     log.severe('onError -- ${bloc.runtimeType}, $error', error, stackTrace);
     super.onError(bloc, error, stackTrace);
 
-    // you can sho wa snack bar
-    if (scaffoldKey.currentContext != null) {
-      scaffoldKey.currentState!
-        ..hideCurrentSnackBar()
-        ..showSnackBar(
-          SnackBar(
-            content:
-                Text(AppLocalizations.of(scaffoldKey.currentContext!)!.error),
-          ),
-        );
+    // if the error is a http error with auth required,
+    // we assume at these point that the token is no longer valid an logout
+    // and redirect the user to the login page --> so we wanna show a snackbar so that
+    // is is shown ofer the screens
+    if (error is HttpException && error.statusCode == 401) {
+      // you can show a snack bar
+      if (scaffoldKey.currentContext != null) {
+        scaffoldKey.currentState!
+          ..hideCurrentSnackBar()
+          ..showSnackBar(
+            SnackBar(
+              content: Text(AppLocalizations.of(scaffoldKey.currentContext!)!
+                  .errorInvalidTokenAutoLogout),
+            ),
+          );
+      }
+      return;
     }
 
-    // or mayb just a dialog
+    // or maybe just a dialog
     if (navigatorKey.currentContext != null) {
-      showDialog(
-        context: navigatorKey.currentContext!,
-        builder: (context) => AlertDialog(
-          title: Text(AppLocalizations.of(context)!.error),
-          content: Text(
-            error.toString(),
-          ),
-        ),
-      );
+      showErrorDialog(
+          context: navigatorKey.currentContext!,
+          error: error,
+          stackTrace: stackTrace);
     }
   }
 }

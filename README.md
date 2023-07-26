@@ -288,7 +288,7 @@ class AppHttpObserver extends HttpObserver {
 }
 ```
 
-or
+or showing a nice dialog globally with a user friendly text and a debug view with stack trace
 
 ```dart
 class AppBlocObserver extends BlocObserver {
@@ -300,61 +300,42 @@ class AppBlocObserver extends BlocObserver {
   AppBlocObserver({required this.scaffoldKey, required this.navigatorKey});
 
   @override
-  void onCreate(BlocBase bloc) {
-    super.onCreate(bloc);
-    log.fine('onCreate -- ${bloc.runtimeType}');
-  }
-
-  @override
-  void onEvent(Bloc bloc, Object? event) {
-    super.onEvent(bloc, event);
-    log.fine('onEvent -- ${bloc.runtimeType}, $event');
-  }
-
-  @override
-  void onChange(BlocBase bloc, Change change) {
-    super.onChange(bloc, change);
-    log.fine('onChange -- ${bloc.runtimeType}, $change');
-  }
-
-  @override
-  void onTransition(Bloc bloc, Transition transition) {
-    super.onTransition(bloc, transition);
-    log.fine('onTransition -- ${bloc.runtimeType}, $transition');
-  }
-
-  @override
   void onError(BlocBase bloc, Object error, StackTrace stackTrace) {
     log.severe('onError -- ${bloc.runtimeType}, $error', error, stackTrace);
     super.onError(bloc, error, stackTrace);
 
-    // you can show a snack bar
-    // if (scaffoldKey.currentContext != null) {
-    //   scaffoldKey.currentState!
-    //     ..hideCurrentSnackBar()
-    //     ..showSnackBar(
-    //       SnackBar(
-    //         content:
-    //             Text(AppLocalizations.of(scaffoldKey.currentContext!)!.error),
-    //       ),
-    //     );
-    // }
+    // if the error is a http error with auth required,
+    // we assume at these point that the token is no longer valid an logout
+    // and redirect the user to the login page --> so we wanna show a snackbar so that
+    // is is shown ofer the screens
+    if (error is HttpException && error.statusCode == 401) {
+      // you can show a snack bar
+      if (scaffoldKey.currentContext != null) {
+        scaffoldKey.currentState!
+          ..hideCurrentSnackBar()
+          ..showSnackBar(
+            SnackBar(
+              content: Text(AppLocalizations.of(scaffoldKey.currentContext!)!
+                  .errorInvalidTokenAutoLogout),
+            ),
+          );
+      }
+      return;
+    }
 
     // or maybe just a dialog
     if (navigatorKey.currentContext != null) {
-      showDialog(
-        context: navigatorKey.currentContext!,
-        builder: (context) => AlertDialog(
-          title: Text(AppLocalizations.of(context)!.error),
-          content: Text(
-            error.toString(),
-          ),
-        ),
-      );
+      showErrorDialog(
+          context: navigatorKey.currentContext!,
+          error: error,
+          stackTrace: stackTrace);
     }
   }
 }
 ```
+
+![](screenshots/error_dialog.PNG)
+![](screenshots/debug_dialog.PNG)
 
 The key concept is, that mainly the erros will throw in the repository package during the network or database requests. The repositories call will be done by the BloC/Cubit.
 So at the end they will catch these errors - the expected error (e.g. wrong credentials) will handle by the bloc themeselves. All other errors will forwarded to the BlocObserver to handle it globally.
