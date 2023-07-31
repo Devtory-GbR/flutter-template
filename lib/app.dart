@@ -211,10 +211,13 @@ class _MyAppState extends State<MyApp> {
   late final UserRepository _userRepository;
   late final LoggerRepository _loggerRepository;
 
+  late final GoRouter _router;
+
   final log = Logger('App');
 
   final scaffoldKey = GlobalKey<ScaffoldMessengerState>();
   final navigatorKey = GlobalKey<NavigatorState>();
+  final homeNavigatorKey = GlobalKey<NavigatorState>();
 
   @override
   void initState() {
@@ -233,6 +236,12 @@ class _MyAppState extends State<MyApp> {
     MyAppHttpClient.clientURL = Environment().env['CLIENT_URL'] ?? '';
     MyAppHttpClient.observer =
         AppHttpObserver(authenticationRepository: _authenticationRepository);
+
+    _router = GoRouter(
+        initialLocation: '/',
+        navigatorKey: navigatorKey,
+        routes: appRoutes(navigatorKey, homeNavigatorKey),
+        redirect: appRedirect);
 
     log.fine("App - initState");
   }
@@ -276,7 +285,7 @@ class _MyAppState extends State<MyApp> {
               create: (_) =>
                   LocaleCubit(localePersistence: _settingsRepository)),
         ],
-        child: MyAppView(scaffoldKey: scaffoldKey, navigatorKey: navigatorKey),
+        child: MyAppView(scaffoldKey: scaffoldKey, router: _router),
       ),
     );
   }
@@ -284,15 +293,9 @@ class _MyAppState extends State<MyApp> {
 
 class MyAppView extends StatelessWidget {
   final GlobalKey<ScaffoldMessengerState> scaffoldKey;
-  final GlobalKey<NavigatorState> navigatorKey;
+  final GoRouter router;
 
-  final GoRouter _router;
-  MyAppView({super.key, required this.scaffoldKey, required this.navigatorKey})
-      : _router = GoRouter(
-            initialLocation: '/',
-            navigatorKey: navigatorKey,
-            routes: appRoutes(navigatorKey),
-            redirect: appRedirect);
+  const MyAppView({super.key, required this.scaffoldKey, required this.router});
 
   @override
   Widget build(BuildContext context) {
@@ -300,12 +303,12 @@ class MyAppView extends StatelessWidget {
       listeners: [
         BlocListener<InitializedCubit, bool>(
           listener: (context, state) {
-            _router.refresh();
+            router.refresh();
           },
         ),
         BlocListener<AuthenticationBloc, AuthenticationState>(
           listener: (context, state) {
-            _router.refresh();
+            router.refresh();
           },
         ),
       ],
@@ -318,7 +321,7 @@ class MyAppView extends StatelessWidget {
                 onGenerateTitle: (context) =>
                     AppLocalizations.of(context)?.title ?? '',
                 theme: appTheme.theme,
-                routerConfig: _router,
+                routerConfig: router,
                 localizationsDelegates: AppLocalizations.localizationsDelegates,
                 // feel free to just add more language support to your app
                 // for that just create a new app_XX.arb file in lib/i10n

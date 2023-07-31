@@ -11,12 +11,8 @@ import 'package:myapp/login/login.dart';
 import 'package:myapp/settings/settings.dart';
 import 'package:repositories/repositories.dart';
 
-final _parentKey = GlobalKey<NavigatorState>();
-final _shellKey = GlobalKey<NavigatorState>();
-
-List<RouteBase> appRoutes(GlobalKey<NavigatorState> rootNavigatorKey) {
-  final homeNavigatorKey = GlobalKey<NavigatorState>();
-
+List<RouteBase> appRoutes(GlobalKey<NavigatorState> rootNavigatorKey,
+    GlobalKey<NavigatorState> homeNavigatorKey) {
   return [
     ShellRoute(
       navigatorKey: homeNavigatorKey,
