@@ -291,7 +291,7 @@ class MyAppView extends StatelessWidget {
       : _router = GoRouter(
             initialLocation: '/',
             navigatorKey: navigatorKey,
-            routes: appRoutes,
+            routes: appRoutes(navigatorKey),
             redirect: appRedirect);
 
   @override
