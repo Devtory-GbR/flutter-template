@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:intl/intl.dart';
 import 'package:logging/logging.dart';
 import 'package:myapp/log/cubit/log_list_cubit.dart';
 import 'package:repositories/repositories.dart';
@@ -61,15 +62,42 @@ class _LogItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListTile(
-      // leading: Text('${item.id}'),
-      title: Text(
-          '[${item.time}] - ${Level.LEVELS.firstWhere((element) => element.value == item.level).name}'),
-      subtitle: Text(
-        item.message,
-        maxLines: 3,
-        overflow: TextOverflow.ellipsis,
+    return Card(
+      child: ListTile(
+        leading: Icon(_getIcon(item.level)),
+        // leading: Text('${item.id}'),
+        title: Text(
+          //'[${item.time}] - ${Level.LEVELS.firstWhere((element) => element.value == item.level).name}',
+          '[${DateFormat('yyyy-MM-dd hh:mm').format(item.time)}] - ${item.name}',
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+        ),
+        subtitle: Text(
+          // we are forceing here minimum 3 lines, so that each card and item has
+          // the same hight
+          '${item.message}\n\n',
+          maxLines: 3,
+          overflow: TextOverflow.ellipsis,
+        ),
       ),
     );
+  }
+
+  IconData _getIcon(int level) {
+    if (level <= Level.FINE.value) {
+      return Icons.check;
+    } else if (level <= Level.CONFIG.value) {
+      return Icons.bug_report;
+    } else if (level <= Level.INFO.value) {
+      return Icons.info;
+    } else if (level <= Level.WARNING.value) {
+      return Icons.warning;
+    } else if (level <= Level.SEVERE.value) {
+      return Icons.error;
+    } else if (level <= Level.SHOUT.value) {
+      return Icons.emergency;
+    } else {
+      return Icons.summarize;
+    }
   }
 }
