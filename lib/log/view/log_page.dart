@@ -36,45 +36,27 @@ class _LogList extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<LogListCubit, LogListState>(
       builder: (context, state) {
-        switch (state.status) {
-          case LogListStatus.failure:
-            return Center(child: Text(AppLocalizations.of(context)!.error));
-          case LogListStatus.success:
-            return _LogItemView(items: state.items);
-          case LogListStatus.loading:
-            return const Center(child: CircularProgressIndicator());
+        if (state.status == LogListStatus.failure) {
+          return Center(child: Text(AppLocalizations.of(context)!.error));
         }
+        if (state.status == LogListStatus.loading) {
+          return const Center(child: CircularProgressIndicator());
+        }
+        if (state.status == LogListStatus.success && state.items.isEmpty) {
+          return Center(child: Text(AppLocalizations.of(context)!.noContent));
+        }
+        return ListView.builder(
+          itemCount: state.items.length,
+          prototypeItem: _LogItem(item: state.items.first),
+          itemBuilder: (context, index) => _LogItem(item: state.items[index]),
+        );
       },
     );
   }
 }
 
-class _LogItemView extends StatelessWidget {
-  const _LogItemView({required this.items});
-
-  final List<Log> items;
-
-  @override
-  Widget build(BuildContext context) {
-    return items.isEmpty
-        ? Center(child: Text(AppLocalizations.of(context)!.noContent))
-        : ListView.builder(
-            itemCount: items.length,
-            prototypeItem: _LogItemTile(
-              item: items.first,
-            ),
-            itemBuilder: (context, index) => _LogItemTile(
-              item: items[index],
-            ),
-          );
-  }
-}
-
-class _LogItemTile extends StatelessWidget {
-  const _LogItemTile({
-    required this.item,
-  });
-
+class _LogItem extends StatelessWidget {
+  const _LogItem({required this.item});
   final Log item;
 
   @override

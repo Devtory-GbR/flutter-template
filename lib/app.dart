@@ -11,6 +11,7 @@ import 'package:myapp/authentication/authentication.dart';
 import 'package:myapp/config/environment.dart';
 import 'package:myapp/error/error.dart';
 import 'package:myapp/init/init.dart';
+import 'package:myapp/log/cubit/log_list_cubit.dart';
 import 'package:myapp/routes.dart';
 import 'package:myapp/settings/settings.dart';
 import 'package:repositories/repositories.dart';
@@ -33,7 +34,6 @@ class Application {
           print(
               '${record.time}[${record.level.name}] ${record.loggerName}: ${record.message}');
         }
-
         try {
           LoggerRepository.instance.addLog(
             name: record.loggerName,
@@ -121,6 +121,14 @@ class AppBlocObserver extends BlocObserver {
   @override
   void onChange(BlocBase bloc, Change change) {
     super.onChange(bloc, change);
+
+    // If it is the LogList Cubit --> we don't wanna Log any change
+    // otherwise we will run in a infinity loop --> for each log the cubit will change
+    // to display the logs
+    if (bloc is LogListCubit) {
+      return;
+    }
+
     log.fine('onChange -- ${bloc.runtimeType}, $change');
   }
 

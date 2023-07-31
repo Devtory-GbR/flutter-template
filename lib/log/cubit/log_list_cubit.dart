@@ -11,7 +11,7 @@ class LogListCubit extends Cubit<LogListState> {
       : super(const LogListState.loading()) {
     _onRecrodSubscription = repository.onRecord.listen((log) {
       if (state.status != LogListStatus.loading) {
-        emit(LogListState.success(state.items..insert(0, log)));
+        emit(LogListState.success(List.of(state.items)..insert(0, log)));
       }
     });
   }
@@ -22,7 +22,7 @@ class LogListCubit extends Cubit<LogListState> {
   Future<void> fetchList() async {
     try {
       final items = (await repository.getLogs());
-      emit(LogListState.success(items));
+      emit(LogListState.success(List.unmodifiable(items)));
     } catch (e) {
       emit(const LogListState.failure());
       rethrow;
