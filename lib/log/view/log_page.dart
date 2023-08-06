@@ -4,6 +4,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:intl/intl.dart';
 import 'package:logging/logging.dart';
 import 'package:myapp/log/cubit/log_list_cubit.dart';
+import 'package:myapp/log/utils/log_level_helper.dart';
 import 'package:repositories/repositories.dart';
 
 class LogPage extends StatelessWidget {
@@ -63,41 +64,50 @@ class _LogItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      child: ListTile(
-        leading: Icon(_getIcon(item.level)),
-        // leading: Text('${item.id}'),
-        title: Text(
-          //'[${item.time}] - ${Level.LEVELS.firstWhere((element) => element.value == item.level).name}',
-          '[${DateFormat('yyyy-MM-dd hh:mm').format(item.time)}] - ${item.name}',
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
-        ),
-        subtitle: Text(
-          // we are forceing here minimum 3 lines, so that each card and item has
-          // the same hight
-          '${item.message}\n\n',
-          maxLines: 3,
-          overflow: TextOverflow.ellipsis,
+      child: Padding(
+        padding: const EdgeInsets.all(12.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              //'[${item.time}] - ${Level.LEVELS.firstWhere((element) => element.value == item.level).name}',
+              '[${DateFormat('yyyy-MM-dd HH:mm').format(item.time)}] - ${item.name}',
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: Theme.of(context).textTheme.titleMedium,
+            ),
+            const Padding(padding: EdgeInsets.only(top: 6)),
+            Container(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 12.0, vertical: 4.0),
+              decoration: BoxDecoration(
+                  color: getLevelColor(item.level, context),
+                  borderRadius: const BorderRadius.all(Radius.circular(8.0))),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    getLevelText(item.level),
+                    style: Theme.of(context).textTheme.labelMedium!.copyWith(
+                        color: getLevelColor(item.level, context).textColor),
+                  ),
+                ],
+              ),
+            ),
+            const Padding(padding: EdgeInsets.only(top: 6)),
+            Text(
+              // we are forceing here minimum 3 lines, so that each card and item has
+              // the same hight
+              '${item.message}\n\n',
+              maxLines: 3,
+              overflow: TextOverflow.ellipsis,
+              style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                  color: Theme.of(context).textTheme.bodySmall!.color),
+            ),
+          ],
         ),
       ),
     );
-  }
-
-  IconData _getIcon(int level) {
-    if (level <= Level.FINE.value) {
-      return Icons.check;
-    } else if (level <= Level.CONFIG.value) {
-      return Icons.bug_report;
-    } else if (level <= Level.INFO.value) {
-      return Icons.info;
-    } else if (level <= Level.WARNING.value) {
-      return Icons.warning;
-    } else if (level <= Level.SEVERE.value) {
-      return Icons.error;
-    } else if (level <= Level.SHOUT.value) {
-      return Icons.emergency;
-    } else {
-      return Icons.summarize;
-    }
   }
 }

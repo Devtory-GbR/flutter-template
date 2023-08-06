@@ -9,19 +9,19 @@ class AppThemes {
   // dont't forget to add it to the theme_cubit.dart
   static final primary = ThemeData(
     brightness: Brightness.light,
-    primarySwatch: AppColors.primary,
-    colorScheme: ColorScheme.fromSwatch(primarySwatch: AppColors.primary)
-        .copyWith(secondary: AppColors.accent),
+    primarySwatch: AppColors.primaryLight,
+    colorScheme: ColorScheme.fromSwatch(primarySwatch: AppColors.primaryLight)
+        .copyWith(secondary: AppColors.accentLight),
     appBarTheme: const AppBarTheme(
       backgroundColor: Colors.white,
-      foregroundColor: AppColors.primary,
+      foregroundColor: AppColors.primaryLight,
       centerTitle: true,
       systemOverlayStyle: SystemUiOverlayStyle(
           statusBarColor: Colors.white70,
           statusBarBrightness: Brightness.dark,
           statusBarIconBrightness: Brightness.dark),
       titleTextStyle: TextStyle(
-        color: AppColors.primary,
+        color: AppColors.primaryLight,
         fontFamily: "Clicker Script",
         fontSize: 41,
       ),
@@ -36,9 +36,9 @@ class AppThemes {
 
   static final primaryDarkTheme = ThemeData(
     brightness: Brightness.dark,
-    primarySwatch: AppColors.primary,
-    colorScheme: ColorScheme.fromSwatch(primarySwatch: AppColors.primary)
-        .copyWith(secondary: AppColors.accent, brightness: Brightness.dark),
+    primarySwatch: AppColors.primaryDark,
+    colorScheme: ColorScheme.fromSwatch(primarySwatch: AppColors.primaryDark)
+        .copyWith(secondary: AppColors.accentDark, brightness: Brightness.dark),
     appBarTheme: const AppBarTheme(
       backgroundColor: Colors.black12,
       foregroundColor: Colors.white,

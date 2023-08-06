@@ -449,6 +449,48 @@ flutter gen-l10n
 
 The themes and colors are defined in [lib\styles\colors.dart](./lib/styles/colors.dart) and [lib\styles\themes.dart](./lib/styles/themes.dart).
 
+In the [colors.dart](./lib/styles/colors.dart) file, you will notice that except from the primary and accent color a custom color palette is defined. Moreover you will find each definition for a light and a dark theme. And a static _of_ method to get the correct color at runtime depending on the current brightness of the theme:
+
+e.g. [log_page.dart](./lib/log/view/log_page.dart):
+
+```dart
+Container(
+  padding:
+      const EdgeInsets.symmetric(horizontal: 12.0, vertical: 4.0),
+  decoration: BoxDecoration(
+      color: getLevelColor(item.level, context),
+      borderRadius: const BorderRadius.all(Radius.circular(8.0))),
+  child: Row(
+    mainAxisSize: MainAxisSize.min,
+    children: [
+      Text(
+        getLevelText(item.level),
+        style: Theme.of(context).textTheme.labelMedium!.copyWith(
+            color: getLevelColor(item.level, context).textColor),
+      ),
+    ],
+  ),
+),
+[...]
+CustomColor getLevelColor(int level, BuildContext context) {
+  if (level <= Level.FINE.value) {
+    return AppColors.of(context).fineColor;
+  } else if (level <= Level.CONFIG.value) {
+    return AppColors.of(context).debugColor;
+  } else if (level <= Level.INFO.value) {
+    return AppColors.of(context).infoColor;
+  } else if (level <= Level.WARNING.value) {
+    return AppColors.of(context).warningColor;
+  } else if (level <= Level.SEVERE.value) {
+    return AppColors.of(context).errorColor;
+  } else if (level <= Level.SHOUT.value) {
+    return AppColors.of(context).criticalColor;
+  } else {
+    return AppColors.of(context).debugColor;
+  }
+}
+```
+
 Feel free to just adjust it or add complete new themes. That the user can choose your theme, don't forget it to add it in the [theme_cubit.dart](./lib/settings/cubit/theme_cubit.dart):
 
 ```dart
