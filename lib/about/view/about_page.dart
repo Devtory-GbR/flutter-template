@@ -7,28 +7,31 @@ import 'package:myapp/widgets/widgets.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
 class AboutPage extends StatelessWidget {
-  AboutPage({super.key});
-
-  final _packageInfoCubit = PackageInfoCubit();
+  const AboutPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<PackageInfoCubit, PackageInfo>(
-      bloc: _packageInfoCubit,
-      builder: (context, packageInfo) {
-        return Scaffold(
-          appBar: AppBar(
-            title: Column(
-              children: [
-                Text(AppLocalizations.of(context)!.title),
-              ],
+    return BlocProvider<PackageInfoCubit>(
+      create: (context) => PackageInfoCubit(),
+      child: BlocBuilder<PackageInfoCubit, PackageInfo>(
+        builder: (context, packageInfo) {
+          return Scaffold(
+            appBar: AppBar(
+              title: Column(
+                children: [
+                  Text(AppLocalizations.of(context)!.title),
+                ],
+              ),
+              bottom: PreferredSize(
+                  preferredSize: const Size.fromHeight(24),
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(
+                      AppLocalizations.of(context)!
+                          .version(packageInfo.version),
+                    ),
+                  )),
             ),
-            bottom: PreferredSize(
-                preferredSize: const Size.fromHeight(24),
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Text(
-                    AppLocalizations.of(context)!.version(packageInfo.version),
                   ),
                 )),
           ),
@@ -88,10 +91,10 @@ class AboutPage extends StatelessWidget {
                 'Copyright (c) 2023, Devtory.io All right reserved',
                 style: Theme.of(context).textTheme.bodySmall,
               ),
-            ),
-          ]),
-        );
-      },
+            ]),
+          );
+        },
+      ),
     );
   }
 }
