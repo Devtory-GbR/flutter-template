@@ -20,12 +20,13 @@ class LogListCubit extends Cubit<LogListState> {
   late StreamSubscription<Log> _onRecrodSubscription;
 
   Future<void> fetchList() async {
+    emit(const LogListState.loading());
     try {
       final items = (await repository.getLogs());
       emit(LogListState.success(List.unmodifiable(items)));
-    } catch (e) {
+    } catch (e, stackTrace) {
       emit(const LogListState.failure());
-      rethrow;
+      addError(e, stackTrace);
     }
   }
 

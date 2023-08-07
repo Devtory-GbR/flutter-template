@@ -51,6 +51,18 @@ List<RouteBase> appRoutes(GlobalKey<NavigatorState> rootNavigatorKey,
                     parentNavigatorKey: rootNavigatorKey,
                     path: 'logs',
                     builder: (context, state) => const LogPage(),
+                    routes: [
+                      GoRoute(
+                        parentNavigatorKey: rootNavigatorKey,
+                        path: ':logId',
+                        builder: (context, state) {
+                          final logId = state.pathParameters['logId'];
+                          return LogDetailPage(
+                            logId: logId != null ? int.parse(logId) : null,
+                          );
+                        },
+                      ),
+                    ],
                   ),
                 ]),
           ],

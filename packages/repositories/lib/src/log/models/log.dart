@@ -30,6 +30,16 @@ class Log extends Equatable {
       stackTrace: logEntry.stackTrace,
     );
   }
+
+  factory Log.empty() {
+    return Log(
+      id: 0,
+      name: "",
+      level: 0,
+      time: DateTime.fromMicrosecondsSinceEpoch(0),
+      message: '',
+    );
+  }
   @override
   String toString() => 'id: $id, message: $message';
 }

@@ -42,9 +42,18 @@ class LoggerRepository {
         .toList();
   }
 
-  Future<int> cleanOldLogs() async {
+  Future<Log?> getLog(int logId) async {
+    return (await ((database.select(database.logEntries)
+              ..where((item) => item.id.isValue(logId))))
+            .get())
+        .map((e) => Log.fromDBEntrty(e))
+        .firstOrNull;
+  }
+
+  Future<int> cleanOldLogs(
+      {Duration keepLogs = const Duration(days: 7)}) async {
     final now = DateTime.now();
-    final compateDate = now.subtract(Duration(days: 7));
+    final compateDate = now.subtract(keepLogs);
 
     return (database.delete(database.logEntries)
           ..where((item) => item.time.isSmallerThanValue(compateDate)))
