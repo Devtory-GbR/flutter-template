@@ -137,15 +137,15 @@ class AppColors {
   static AppColors of(BuildContext context) {
     if (Theme.of(context).brightness == Brightness.dark) {
       return AppColors._(
-        primaryColor: primaryLight,
-        accentColor: accentLight,
-        customColors: customColorsLight,
-      );
-    } else {
-      return AppColors._(
         primaryColor: primaryDark,
         accentColor: accentDark,
         customColors: customColorsDark,
+      );
+    } else {
+      return AppColors._(
+        primaryColor: primaryLight,
+        accentColor: accentLight,
+        customColors: customColorsLight,
       );
     }
   }
