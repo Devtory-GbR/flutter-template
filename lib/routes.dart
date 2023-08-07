@@ -14,6 +14,7 @@ import 'package:repositories/repositories.dart';
 List<RouteBase> appRoutes(GlobalKey<NavigatorState> rootNavigatorKey,
     GlobalKey<NavigatorState> homeNavigatorKey) {
   return [
+    GoRoute(path: '/', redirect: (_, __) => '/dashboard'),
     ShellRoute(
       navigatorKey: homeNavigatorKey,
       builder: (BuildContext context, GoRouterState state, Widget child) {
@@ -22,12 +23,38 @@ List<RouteBase> appRoutes(GlobalKey<NavigatorState> rootNavigatorKey,
       routes: [
         GoRoute(
             parentNavigatorKey: homeNavigatorKey,
-            path: '/',
+            path: '/dashboard',
             builder: (context, state) => const DashboardPage()),
         GoRoute(
-            parentNavigatorKey: homeNavigatorKey,
-            path: '/settings',
-            builder: (context, state) => const SettingsPage())
+          parentNavigatorKey: homeNavigatorKey,
+          path: '/settings',
+          builder: (context, state) => const SettingsPage(),
+          routes: [
+            GoRoute(
+                parentNavigatorKey: rootNavigatorKey,
+                path: 'themes',
+                builder: (context, state) => const ThemePage()),
+            GoRoute(
+                parentNavigatorKey: rootNavigatorKey,
+                path: 'locales',
+                builder: (context, state) => const LocalePage()),
+            GoRoute(
+                parentNavigatorKey: rootNavigatorKey,
+                path: 'help',
+                builder: (context, state) => const AboutPage(),
+                routes: [
+                  GoRoute(
+                      parentNavigatorKey: rootNavigatorKey,
+                      path: 'device_info',
+                      builder: (context, state) => const DeviceInfoPage()),
+                  GoRoute(
+                    parentNavigatorKey: rootNavigatorKey,
+                    path: 'logs',
+                    builder: (context, state) => const LogPage(),
+                  ),
+                ]),
+          ],
+        )
       ],
     ),
     GoRoute(
@@ -46,26 +73,6 @@ List<RouteBase> appRoutes(GlobalKey<NavigatorState> rootNavigatorKey,
                     AuthenticationStatus.authenticated
                 ? '/'
                 : null),
-    GoRoute(
-        parentNavigatorKey: rootNavigatorKey,
-        path: '/themes',
-        builder: (context, state) => const ThemePage()),
-    GoRoute(
-        parentNavigatorKey: rootNavigatorKey,
-        path: '/locales',
-        builder: (context, state) => const LocalePage()),
-    GoRoute(
-        parentNavigatorKey: rootNavigatorKey,
-        path: '/about',
-        builder: (context, state) => AboutPage()),
-    GoRoute(
-        parentNavigatorKey: rootNavigatorKey,
-        path: '/about/device_info',
-        builder: (context, state) => DeviceInfoPage()),
-    GoRoute(
-        parentNavigatorKey: rootNavigatorKey,
-        path: '/about/logs',
-        builder: (context, state) => const LogPage()),
   ];
 }
 

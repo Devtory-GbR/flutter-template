@@ -40,7 +40,7 @@ class _SettingsListState extends State<_SettingsList> {
                   title: Text(AppLocalizations.of(context)!.language),
                   subtitle: Text(AppLocalizations.of(context)!
                       .languageChoice(appLocale.desc)),
-                  onTap: () => context.push('/locales'));
+                  onTap: () => context.go('/settings/locales'));
             }),
             BlocBuilder<ThemeCubit, AppTheme>(
               builder: (context, appTheme) {
@@ -49,7 +49,7 @@ class _SettingsListState extends State<_SettingsList> {
                   title: Text(AppLocalizations.of(context)!.theme),
                   subtitle: Text(
                       AppLocalizations.of(context)!.themeChoice(appTheme.desc)),
-                  onTap: () => context.push('/themes'),
+                  onTap: () => context.go('/settings/themes'),
                 );
               },
             ),
@@ -60,7 +60,7 @@ class _SettingsListState extends State<_SettingsList> {
             ListTile(
               leading: const Icon(Icons.info),
               title: Text(AppLocalizations.of(context)!.about),
-              onTap: () => context.push('/about'),
+              onTap: () => context.go('/settings/help'),
             ),
           ],
         ),
